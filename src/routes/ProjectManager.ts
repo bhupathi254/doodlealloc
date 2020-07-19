@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, response } from "express";
 import { validate, paginatedSchema, createProjectManager } from '@shared/validation';
 import { BAD_REQUEST, OK, CREATED } from 'http-status-codes';
 import ProjectManager, { IProjectManager } from '@entities/ProjectManager';
@@ -19,6 +19,7 @@ router.get('/all', isValidUser(roles.admin), validate(paginatedSchema, 'query'),
         const result = await projectManagerDao.getAll({ page, limit, search, sortBy });
         return res.status(OK).json(result);
     } catch (error) {
+        console.log(error);
         return res.status(BAD_REQUEST).json({ error })
     }
 });
@@ -33,6 +34,23 @@ router.post('/add', isValidUser(roles.admin), validate(createProjectManager, 'bo
         const createdBy = req.user ? req.user._id : null;
         await projectManagerDao.add({ userId: _id, doj, createdBy } as IProjectManager);
         return res.status(CREATED).end();
+    } catch (error) {
+        return res.status(BAD_REQUEST).json({ error });
+    }
+})
+
+router.get('/:projectManagerId', isValidUser(roles.admin), async ({params:{projectManagerId}}, res: Response) => {
+    try {
+        const projectManager = await projectManagerDao.getOne(projectManagerId);
+        return res.status(OK).json(projectManager);
+    } catch (error) {
+        return res.status(BAD_REQUEST).json({ error });
+    }
+})
+
+router.put('/:projectManagerId', isValidUser(roles.admin), async ({params:{projectManagerId}, body}, res:Response)=>{
+    try {
+        
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }
