@@ -36,10 +36,10 @@ router.post('/add', validate(createUser, 'body'), async (req: Request, res: Resp
             });
         }
         await userDao.add(user);
-        return res.status(CREATED).end();    
+        return res.status(CREATED).end();
     } catch (error) {
         console.log(error)
-        return res.status(BAD_REQUEST).json({error})
+        return res.status(BAD_REQUEST).json({ error })
     }
 });
 
@@ -56,7 +56,7 @@ router.put('/update/:id', async (req: Request, res: Response) => {
         });
     }
     user.id = Number(user.id);
-    await userDao.update(user);
+    //await userDao.update(user);
     return res.status(OK).end();
 });
 
@@ -75,14 +75,14 @@ router.delete('/delete/:id', async (req: Request, res: Response) => {
  *                    Get User - "GET /api/users/get/:id"
  ******************************************************************************/
 
- router.get('/get/:id', isUser, async(req:Request, res:Response)=>{
-     const {id} = req.params as ParamsDictionary;
-     const user = await userDao.getById(id);
-     if(!!user){
-         return res.status(OK).json(user);
-     }
-     return res.status(BAD_REQUEST).json({message:'User not found'});
- })
+router.get('/get/:id', isUser, async (req: Request, res: Response) => {
+    const { id } = req.params as ParamsDictionary;
+    const user = await userDao.getById(id);
+    if (!!user) {
+        return res.status(OK).json(user);
+    }
+    return res.status(BAD_REQUEST).json({ message: 'User not found' });
+})
 
 /******************************************************************************
 *                    Get User - "GET /api/users/profile"
@@ -106,10 +106,10 @@ router.post('/login', validate(loginSchema, 'body'), async (req: Request, res: R
     try {
         const { login } = req.body;
         const user = await userDao.login(login);
-        if(user){
+        if (user) {
             return res.status(OK).json(user);
         }
-        return res.status(BAD_REQUEST).json({message:'Invalid credentials'});
+        return res.status(BAD_REQUEST).json({ message: 'Invalid credentials' });
     } catch (error) {
         console.log(error, 'ette')
         return res.status(BAD_REQUEST).json({ error })

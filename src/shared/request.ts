@@ -4,12 +4,12 @@ import UserDao from '@daos/User/UserDao';
 import jwt from 'jsonwebtoken';
 import { UNAUTHORIZED } from 'http-status-codes';
 
-export interface IUserRequest extends Request{
+export interface IUserRequest extends Request {
     user?: IUser
 }
 
 export const isValidUser = (...userTypes: (number)[]) => {
-    return (req: IUserRequest, res: Response, next: NextFunction)=>{
+    return (req: IUserRequest, res: Response, next: NextFunction) => {
         const userDao = new UserDao();
         const token = `${req.headers['authorization']}`;
         const auth = token.includes('Bearer ') && token.split('Bearer ')[1];
@@ -44,7 +44,7 @@ export const isUser = (handler: (req: IUserRequest, res: express.Response, next?
                     if (!!payload && '_id' in payload) {
                         const requestWrapper: IUserRequest = <IUserRequest>req;
                         const user = await userDao.getById(payload._id);
-                        if(!!user){
+                        if (!!user) {
                             requestWrapper.user = user;
                             return handler(requestWrapper, res, next);
                         }
@@ -52,7 +52,7 @@ export const isUser = (handler: (req: IUserRequest, res: express.Response, next?
                 });
             }
             console.log('test')
-            return res.status(UNAUTHORIZED).json({message:'Unauthorized user'});
+            return res.status(UNAUTHORIZED).json({ message: 'Unauthorized user' });
         } catch (error) {
             next(error);
         }

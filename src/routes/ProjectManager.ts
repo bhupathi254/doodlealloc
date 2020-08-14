@@ -1,5 +1,5 @@
 import { Router, Request, Response, response } from "express";
-import { validate, paginatedSchema, createProjectManager } from '@shared/validation';
+import { validate, paginatedSchema, createProjectManager, isProjectManagerId } from '@shared/validation';
 import { BAD_REQUEST, OK, CREATED } from 'http-status-codes';
 import ProjectManager, { IProjectManager } from '@entities/ProjectManager';
 import ProjectManagerDao from '@daos/ProjectManager/ProjectManagerDao';
@@ -39,7 +39,7 @@ router.post('/add', isValidUser(roles.admin), validate(createProjectManager, 'bo
     }
 })
 
-router.get('/:projectManagerId', isValidUser(roles.admin), async ({params:{projectManagerId}}, res: Response) => {
+router.get('/:projectManagerId', isValidUser(roles.admin), async ({ params: { projectManagerId } }, res: Response) => {
     try {
         const projectManager = await projectManagerDao.getOne(projectManagerId);
         return res.status(OK).json(projectManager);
@@ -48,9 +48,13 @@ router.get('/:projectManagerId', isValidUser(roles.admin), async ({params:{proje
     }
 })
 
-router.put('/:projectManagerId', isValidUser(roles.admin), async ({params:{projectManagerId}, body}, res:Response)=>{
+router.put('/:projectManagerId', isValidUser(roles.admin), validate(createProjectManager, 'body'), async ({ params: { projectManagerId }, body }, res: Response) => {
     try {
-        
+        const { user, doj } = body;
+        await userDao.update(user._id, user);
+        const pm = { doj } as IProjectManager;
+        projectManagerDao.update(projectManagerId, pm);
+        return res.status(OK).end();
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }

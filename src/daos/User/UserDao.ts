@@ -4,7 +4,7 @@ export interface IUserDao {
     getOne: (email: string) => Promise<IUser | null>;
     getAll: (query: any) => Promise<{ users: IUser[], count: number }>;
     add: (user: IUser) => Promise<IUser>;
-    update: (user: IUser) => Promise<void>;
+    update: (id: IUser['_id'], user: IUser) => Promise<void>;
     delete: (id: number) => Promise<void>;
     login: (user: IUser) => Promise<any>;
     getById: (id: IUser['_id']) => Promise<IUser>;
@@ -25,7 +25,7 @@ class UserDao implements IUserDao {
      * 
      * @param query 
      */
-    public async getById(id: IUser['_id']): Promise<IUser>{
+    public async getById(id: IUser['_id']): Promise<IUser> {
         const user = await User.findById(id).select('-password');
         return user as any;
     }
@@ -39,7 +39,7 @@ class UserDao implements IUserDao {
         const { page, limit, search, sortBy } = query;
         const users = await User.find({}).skip(page * limit).limit(limit).sort(`-${sortBy}`);
         const count = await User.countDocuments({});
-        return {users, count} as any;
+        return { users, count } as any;
     }
 
 
@@ -58,8 +58,9 @@ class UserDao implements IUserDao {
      *
      * @param user
      */
-    public async update(user: IUser): Promise<void> {
+    public async update(_id: IUser['_id'], user: IUser): Promise<void> {
         // TODO
+        await User.findByIdAndUpdate({ _id }, user);
         return {} as any;
     }
 

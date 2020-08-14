@@ -35,6 +35,9 @@ export const loginSchema = Joi.object({
     })
 });
 
+export const isProjectManagerId = Joi.object({
+    projectManagerId: Joi.string().pattern(/^[0-9+]{7}-[0-9+]{1}$/).required()
+});
 /** Create Project Manager */
 export const createProjectManager = Joi.object({
     user: Joi.object({
@@ -44,10 +47,11 @@ export const createProjectManager = Joi.object({
         contactNumber: Joi.string().trim().required(),
         dob: Joi.string().isoDate().optional(),
         role: Joi.number().valid(roles.projectManager).required(),
-        gender: Joi.number().valid(1, 2, 3).default(1)
+        gender: Joi.number().valid(1, 2, 3).default(1),
+        _id: Joi.string().optional()
     }),
     doj: Joi.string().isoDate().optional().allow('', null)
-})
+});
 
 const options = {
     basic: {

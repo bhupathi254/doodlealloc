@@ -6,7 +6,7 @@ export interface IProjectManagerDao {
     getOne: (_id: IProjectManager['_id']) => Promise<IProjectManager | null>;
     getAll: (query: any) => Promise<{ projectManagers: [any], count: number }>;
     add: (projectManager: IProjectManager) => Promise<void>;
-    update: (projectManager: IProjectManager) => Promise<void>;
+    update: (_id: IProjectManager['_id'], projectManager: IProjectManager) => Promise<void>;
 }
 
 class ProjectManagerDao implements IProjectManagerDao {
@@ -123,8 +123,7 @@ class ProjectManagerDao implements IProjectManagerDao {
             }
         }, {
             $unwind: {
-                path: '$user',
-                preserveNullAndEmptyArrays: true
+                path: '$user'
             }
         }, ...match, {
             $sort: { [query.sortKey]: sortBy }
@@ -146,8 +145,9 @@ class ProjectManagerDao implements IProjectManagerDao {
     };
 
     /** */
-    public async update(projectManager: IProjectManager): Promise<void> {
-
+    public async update(_id: IProjectManager['_id'], projectManager: IProjectManager): Promise<void> {
+        await ProjectManager.findByIdAndUpdate({ _id }, projectManager);
+        return null as any;
     };
 
 }
