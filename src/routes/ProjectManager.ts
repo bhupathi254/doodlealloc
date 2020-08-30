@@ -13,7 +13,7 @@ const userDao = new UserDao()
 /**
  * Get all Project Manager GET /api/projectManagers/all
  */
-router.get('/all', isValidUser(roles.admin), validate(paginatedSchema, 'query'), async (req: Request, res: Response) => {
+router.get('/all', isValidUser('Admin'), validate(paginatedSchema, 'query'), async (req: Request, res: Response) => {
     try {
         const { page, limit, search, sortBy } = req.query;
         const result = await projectManagerDao.getAll({ page, limit, search, sortBy });
@@ -27,19 +27,19 @@ router.get('/all', isValidUser(roles.admin), validate(paginatedSchema, 'query'),
 /**
  * 
  */
-router.post('/add', isValidUser(roles.admin), validate(createProjectManager, 'body'), async (req: IUserRequest, res: Response) => {
+router.post('/add', isValidUser('Admin'), validate(createProjectManager, 'body'), async (req: IUserRequest, res: Response) => {
     try {
-        const { user, doj } = req.body;
+        const { user, doj, status } = req.body;
         const { _id } = await userDao.add(user);
         const createdBy = req.user ? req.user._id : null;
-        await projectManagerDao.add({ userId: _id, doj, createdBy } as IProjectManager);
+        await projectManagerDao.add({ userId: _id, doj, status, createdBy } as IProjectManager);
         return res.status(CREATED).end();
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }
 })
 
-router.get('/:projectManagerId', isValidUser(roles.admin), async ({ params: { projectManagerId } }, res: Response) => {
+router.get('/:projectManagerId', isValidUser('Admin'), async ({ params: { projectManagerId } }, res: Response) => {
     try {
         const projectManager = await projectManagerDao.getOne(projectManagerId);
         return res.status(OK).json(projectManager);
@@ -48,13 +48,21 @@ router.get('/:projectManagerId', isValidUser(roles.admin), async ({ params: { pr
     }
 })
 
-router.put('/:projectManagerId', isValidUser(roles.admin), validate(createProjectManager, 'body'), async ({ params: { projectManagerId }, body }, res: Response) => {
+router.put('/:projectManagerId', isValidUser('Admin'), validate(createProjectManager, 'body'), async ({ params: { projectManagerId }, body }, res: Response) => {
     try {
-        const { user, doj } = body;
+        const { user, doj, status } = body;
         await userDao.update(user._id, user);
-        const pm = { doj } as IProjectManager;
+        const pm = { doj, status } as IProjectManager;
         projectManagerDao.update(projectManagerId, pm);
         return res.status(OK).end();
+    } catch (error) {
+        return res.status(BAD_REQUEST).json({ error });
+    }
+})
+
+router.delete('/', isValidUser('Admin'), async ({ query, user }: IUserRequest, res) => {
+    try {
+        return res.status(OK).json({ query, user });
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }

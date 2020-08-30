@@ -36,6 +36,7 @@ class ProjectManagerDao implements IProjectManagerDao {
             $project: {
                 _id: 1,
                 doj: 1,
+                status:1, 
                 'user._id': 1,
                 'user.email': 1,
                 'user.contactNumber': 1,
@@ -56,7 +57,7 @@ class ProjectManagerDao implements IProjectManagerDao {
      * @param query = {page:number, limit:number, sortBy:number, search:string}
      */
     public async getAll(query: any): Promise<{ projectManagers: [any]; count: number; }> {
-        query = Object.assign({ page: 1, limit: 10, sortBy: 'asc', sortKey: 'createdAt', search: '', status: [1, 2, 3, 4] }, query);
+        query = Object.assign({ page: 1, limit: 10, sortBy: 'asc', sortKey: 'createdAt', search: '', status: ['Active','Inactive'] }, query);
         const match = !!query.search ? [{
             $match: {
                 $or: [{
@@ -146,6 +147,7 @@ class ProjectManagerDao implements IProjectManagerDao {
 
     /** */
     public async update(_id: IProjectManager['_id'], projectManager: IProjectManager): Promise<void> {
+        console.log(projectManager)
         await ProjectManager.findByIdAndUpdate({ _id }, projectManager);
         return null as any;
     };

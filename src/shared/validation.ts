@@ -23,7 +23,7 @@ export const createUser = Joi.object({
         lastName: Joi.string().trim().required(),
         contactNumber: Joi.string().trim().required(),
         dob: Joi.string().isoDate().optional(),
-        gender: Joi.number().valid(1, 2, 3).default(1)
+        gender: Joi.number().valid('Male','Female').default('Male')
     })
 });
 
@@ -46,10 +46,11 @@ export const createProjectManager = Joi.object({
         lastName: Joi.string().trim().required(),
         contactNumber: Joi.string().trim().required(),
         dob: Joi.string().isoDate().optional(),
-        role: Joi.number().valid(roles.projectManager).required(),
-        gender: Joi.number().valid(1, 2, 3).default(1),
+        role: Joi.string().valid('Project Manager').required(),
+        gender: Joi.number().valid('Male', 'Female').default('Male'),
         _id: Joi.string().optional()
     }),
+    status: Joi.string().valid('Active','Inactive').required(),
     doj: Joi.string().isoDate().optional().allow('', null)
 });
 

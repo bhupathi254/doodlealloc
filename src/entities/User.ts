@@ -7,8 +7,8 @@ export interface IUser extends Document {
     email: string;
     contactNumber: string,
     dob: Date,
-    role: number,
-    gender: number,
+    role: string,
+    gender: string,
     password: String,
     settings: {
         lastLoggedIn: Date,
@@ -41,17 +41,17 @@ export const UserSchema: Schema = new Schema({
         type: String
     },
     role:{
-        type: Number,
-        enum: [1, 2, 3, 4, 5] /** 1:Admin, 5: Resourse, 2: Client, 3: Project Manager, 4: Delivary Team */,
-        default: 1
+        type: String,
+        enum: ['Admin', 'Resourse', 'Client', 'Project Manager', 'Delivary Team'] /** 1:Admin, 5: Resourse, 2: Client, 3: Project Manager, 4: Delivary Team */,
+        default: 'Project Manager'
     },
     dob: {
         type: Date
     },
     gender: {
-        type: Number,
-        enum: [1, 2],
-        default: 1
+        type: String,
+        enum: ['Male', 'Female'],
+        default: 'Male'
     },
     password: {
         type: String

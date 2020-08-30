@@ -18,8 +18,9 @@ const ProjectManagerSchema = new Schema({
         type: Date
     },
     status:{
-        type: Number,
-        default: 1
+        type: String,
+        enum: ['Active', 'Inactive', 'Deleted'],
+        default: 'Active'
     },
     createdBy: {
         type: Schema.Types.ObjectId,

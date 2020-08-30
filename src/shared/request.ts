@@ -8,7 +8,7 @@ export interface IUserRequest extends Request {
     user?: IUser
 }
 
-export const isValidUser = (...userTypes: (number)[]) => {
+export const isValidUser = (...userTypes: (string)[]) => {
     return (req: IUserRequest, res: Response, next: NextFunction) => {
         const userDao = new UserDao();
         const token = `${req.headers['authorization']}`;
@@ -18,6 +18,7 @@ export const isValidUser = (...userTypes: (number)[]) => {
                 if (!!payload && '_id' in payload) {
                     const user = await userDao.getById(payload._id);
                     const role = user.role;
+                    console.log(role);
                     if (!!user && userTypes.includes(role)) {
                         req.user = user;
                         next();
