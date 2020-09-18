@@ -53,16 +53,18 @@ router.put('/:projectManagerId', isValidUser('Admin'), validate(createProjectMan
         const { user, doj, status } = body;
         await userDao.update(user._id, user);
         const pm = { doj, status } as IProjectManager;
-        projectManagerDao.update(projectManagerId, pm);
+        await projectManagerDao.update(projectManagerId, pm);
         return res.status(OK).end();
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }
 })
 
-router.delete('/', isValidUser('Admin'), async ({ query, user }: IUserRequest, res) => {
+router.delete('/', isValidUser('Admin'), async ({ query:{records}, user }: IUserRequest, res) => {
     try {
-        return res.status(OK).json({ query, user });
+        const status ='Deleted';
+        await projectManagerDao.updateMany(records as any, {status});
+        return res.status(OK).end();
     } catch (error) {
         return res.status(BAD_REQUEST).json({ error });
     }

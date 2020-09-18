@@ -18,6 +18,14 @@ export const getRandomInt = () => {
         return v.toString(16);
     });
 };
+
+export const decipher = (encoded: string): string => {
+    const salt = process.env.SALT as string,
+        textToChars = (text: string) => text.split('').map(c => c.charCodeAt(0)),
+        applySaltToChar = (code: any) => textToChars(salt).reduce((a, b) => a ^ b, code),
+        matched = encoded.match(/.{1,2}/g) || [];
+    return matched.map(hex => parseInt(hex, 16)).map(applySaltToChar).map(charCode => String.fromCharCode(charCode)).join('');
+}
 /*
 export const isUser = (req: Request, res: Response, next: NextFunction) => {
     //passport.authenticate('jwt', {session:false})

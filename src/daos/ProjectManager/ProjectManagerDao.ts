@@ -152,5 +152,10 @@ class ProjectManagerDao implements IProjectManagerDao {
         return null as any;
     };
 
+    public async updateMany(_ids: (IProjectManager['_id'])[], data:any): Promise<void>{
+        await ProjectManager.updateMany({_id:_ids}, data);
+        return null as any;
+    }
+
 }
 export default ProjectManagerDao;

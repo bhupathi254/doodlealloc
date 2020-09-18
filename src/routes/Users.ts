@@ -8,6 +8,7 @@ import { paramMissingError } from '@shared/constants';
 
 import { loginSchema, createUser, paginatedSchema, validate } from '@shared/validation';
 import { isUser } from '@shared/request';
+import { decipher } from '@shared/functions';
 // Init shared
 const router = Router();
 const userDao = new UserDao();
@@ -105,7 +106,9 @@ router.get('/profile', isUser, async (req: Request, res: Response) => {
 router.post('/login', validate(loginSchema, 'body'), async (req: Request, res: Response) => {
     try {
         const { login } = req.body;
-        const user = await userDao.login(login);
+        let {password} = login;
+        password = decipher(password);
+        const user = await userDao.login({...login, password});
         if (user) {
             return res.status(OK).json(user);
         }
